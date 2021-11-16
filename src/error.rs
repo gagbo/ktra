@@ -105,28 +105,40 @@ pub enum Error {
     VersionNotFoundInDb(Version),
     #[cfg(all(
         feature = "db-sled",
-        not(all(feature = "db-redis", feature = "db-mongo"))
+        not(all(feature = "db-redis", feature = "db-mongo", feature = "db-sqlite"))
     ))]
     #[error("error by database: {}", _0)]
     Db(sled::Error),
     #[cfg(all(
         feature = "db-sled",
-        not(all(feature = "db-redis", feature = "db-mongo"))
+        not(all(feature = "db-redis", feature = "db-mongo", feature = "db-sqlite"))
     ))]
     #[error("error by database: {}", _0)]
     Transaction(sled::transaction::TransactionError),
     #[cfg(all(
         feature = "db-redis",
-        not(all(feature = "db-sled", feature = "db-mongo"))
+        not(all(feature = "db-sled", feature = "db-mongo", feature = "db-sqlite"))
     ))]
     #[error("error by database: {}", _0)]
     Db(redis::RedisError),
     #[cfg(all(
         feature = "db-mongo",
-        not(all(feature = "db-sled", feature = "db-redis"))
+        not(all(feature = "db-sled", feature = "db-redis", feature = "db-sqlite"))
     ))]
     #[error("error by database: {}", _0)]
     Db(mongodb::error::Error),
+    #[cfg(all(
+        feature = "db-sqlite",
+        not(all(feature = "db-sled", feature = "db-redis", feature = "db-mongo"))
+    ))]
+    #[error("error by database: {}", _0)]
+    Db(rusqlite::Error),
+    #[cfg(all(
+        feature = "db-sqlite",
+        not(all(feature = "db-sled", feature = "db-redis", feature = "db-mongo"))
+    ))]
+    #[error("error by database pool: {}", _0)]
+    Pool(r2d2::Error),
     #[error("multiple errors: {:?}", _0)]
     Multiple(Vec<Error>),
     #[error("task joinning error: {}", _0)]

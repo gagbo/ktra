@@ -138,8 +138,8 @@ impl User {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Entry {
-    versions: HashMap<Version, Metadata>,
-    owner_ids: Vec<u32>,
+    pub(crate) versions: HashMap<Version, Metadata>,
+    pub(crate) owner_ids: Vec<u32>,
 }
 
 impl Entry {

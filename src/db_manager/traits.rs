@@ -4,8 +4,10 @@ use crate::models::{Metadata, Query, Search, User};
 use async_trait::async_trait;
 use semver::Version;
 
+/// A state manager backed by a database implementation
 #[async_trait]
 pub trait DbManager: Send + Sync + Sized {
+    /// Faillible constructor of a new manager with given configuration
     async fn new(confg: &DbConfig) -> Result<Self, Error>;
 
     async fn can_edit_owners(&self, user_id: u32, name: &str) -> Result<bool, Error>;

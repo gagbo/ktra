@@ -61,3 +61,14 @@ jobs:
         file: ./docker/ktra.Dockerfile
         tags: ghcr.io/${{ github.repository_owner }}/ktra:${{ env.TAG }}
         push: true
+
+    - name: "`db-sqlite` build and push"
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./docker/ktra.Dockerfile
+        tags: ghcr.io/${{ github.repository_owner }}/ktra:db-sqlite-${{ env.TAG }}
+        no-cache: true
+        build-args: |
+          DB=db-sqlite
+        push: true

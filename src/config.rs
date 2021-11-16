@@ -87,6 +87,10 @@ pub struct DbConfig {
     #[cfg(feature = "db-mongo")]
     #[serde(default = "DbConfig::mongodb_url_default")]
     pub mongodb_url: String,
+
+    #[cfg(feature = "db-sqlite")]
+    #[serde(default = "DbConfig::db_file_path_default")]
+    pub db_file_path: PathBuf,
 }
 
 impl Default for DbConfig {
@@ -98,6 +102,8 @@ impl Default for DbConfig {
             redis_url: DbConfig::redis_url_default(),
             #[cfg(feature = "db-mongo")]
             mongodb_url: DbConfig::mongodb_url_default(),
+            #[cfg(feature = "db-sqlite")]
+            db_file_path: DbConfig::db_file_path_default(),
         }
     }
 }
@@ -116,6 +122,11 @@ impl DbConfig {
     #[cfg(feature = "db-mongo")]
     fn mongodb_url_default() -> String {
         "mongodb://localhost:27017".to_owned()
+    }
+
+    #[cfg(feature = "db-sqlite")]
+    fn db_file_path_default() -> PathBuf {
+        PathBuf::from("db.sqlite")
     }
 }
 

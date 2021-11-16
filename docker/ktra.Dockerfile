@@ -1,4 +1,4 @@
-FROM rust:1.50.0 as builder
+FROM rust:1.56.0 as builder
 
 ARG DB="db-sled"
 ARG MIRRORING="crates-io-mirroring"

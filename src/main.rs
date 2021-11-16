@@ -25,19 +25,24 @@ use warp::{Filter, Rejection, Reply};
 
 #[cfg(all(
     feature = "db-mongo",
-    not(all(feature = "db-redis", feature = "db-sled"))
+    not(all(feature = "db-redis", feature = "db-sled", feature = "db-sqlite"))
 ))]
 use db_manager::MongoDbManager;
 #[cfg(all(
     feature = "db-redis",
-    not(all(feature = "db-sled", feature = "db-mongo"))
+    not(all(feature = "db-sled", feature = "db-mongo", feature = "db-sqlite"))
 ))]
 use db_manager::RedisDbManager;
 #[cfg(all(
     feature = "db-sled",
-    not(all(feature = "db-redis", feature = "db-mongo"))
+    not(all(feature = "db-redis", feature = "db-mongo", feature = "db-sqlite"))
 ))]
 use db_manager::SledDbManager;
+#[cfg(all(
+    feature = "db-sqlite",
+    not(all(feature = "db-redis", feature = "db-mongo", feature = "db-sled"))
+))]
+use db_manager::SqliteDbManager;
 
 #[cfg(feature = "crates-io-mirroring")]
 #[tracing::instrument(skip(
@@ -117,21 +122,26 @@ async fn run_server(config: Config) -> anyhow::Result<()> {
 
     #[cfg(all(
         feature = "db-sled",
-        not(all(feature = "db-redis", feature = "db-mongo"))
+        not(all(feature = "db-redis", feature = "db-mongo", feature = "db-sqlite"))
     ))]
     let db_manager = SledDbManager::new(&config.db_config).await?;
     #[cfg(all(
         feature = "db-redis",
-        not(all(feature = "db-sled", feature = "db-mongo"))
+        not(all(feature = "db-sled", feature = "db-mongo", feature = "db-sqlite"))
     ))]
     let db_manager = RedisDbManager::new(&config.db_config).await?;
     #[cfg(all(
         feature = "db-mongo",
-        not(all(feature = "db-sled", feature = "db-redis"))
+        not(all(feature = "db-sled", feature = "db-redis", feature = "db-sqlite"))
     ))]
     let db_manager = MongoDbManager::new(&config.db_config).await?;
     let index_manager = IndexManager::new(config.index_config).await?;
     index_manager.pull().await?;
+    #[cfg(all(
+        feature = "db-sqlite",
+        not(all(feature = "db-sled", feature = "db-redis", feature = "db-mongo"))
+    ))]
+    let db_manager = SqliteDbManager::new(&config.db_config).await?;
 
     #[cfg(feature = "crates-io-mirroring")]
     let http_client = Client::builder().build()?;
