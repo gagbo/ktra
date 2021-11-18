@@ -19,7 +19,7 @@ RUN cargo build --release --no-default-features --features=secure-auth,openid,${
 
 FROM debian:bullseye-slim
 
-LABEL org.opencontainers.image.source https://github.com/moriturus/ktra
+LABEL org.opencontainers.image.source https://github.com/gagbo/ktra
 LABEL org.opencontainers.image.documentation https://book.ktra.dev
 LABEL org.opencontainers.image.licenses "(Apache-2.0 OR MIT)"
 
